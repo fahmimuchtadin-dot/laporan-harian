@@ -270,7 +270,7 @@ function userPage(){
  const list=USERS.map(x=>{const info=x.role==='wali'?'Kelas '+x.kelas+' · '+KIDS.filter(k=>k.kelas===x.kelas).length+' anak':x.role==='admin'?'Kelola akun':(x.childIds.length?'Anak: '+x.childIds.map(i=>KIDS.find(k=>k.id===i).nama).join(', '):'<b style="color:#b3402f">Belum tertaut ke anak</b>');
   return `<div class="card ucard"><div><h3>${esc(x.nama)} <span class="tag">${ROLE[x.role]}</span></h3><p>${info}</p></div><div><button class="sm" data-act="newcode" data-id="${x.id}">Kode baru</button> <button class="sm" data-act="edit" data-id="${x.id}">Ubah</button>${x.id!==me.id?` <button class="sm d" data-act="del" data-id="${x.id}">Hapus</button>`:''}</div></div>`}).join('');
  return `<h2 class="ph">Pengguna<small>Admin tidak membuka isi laporan anak</small></h2><div class="ulist">${list}</div><form class="card" id="uf" onsubmit="return false"><h3>${editId?'Ubah pengguna':'Tambah pengguna'}</h3>
- <label for="un">Nama</label><input id="un" value="${esc(u.nama)}"><label for="ur">Peran</label><select id="ur" ${editId?'disabled':''}>${Object.keys(ROLE).map(r=>`<option value="${r}" ${r===u.role?'selected':''}>${ROLE[r]}</option>`).join('')}</select>
+ <label for="un">Nama</label><input id="un" value="${esc(u.nama)}"><label>Peran</label><input type="hidden" id="ur" value="${u.role}"><div class="chips" id="roleChips">${Object.keys(ROLE).map(r=>`<label><input type="radio" name="peran" value="${r}" ${r===u.role?'checked':''} ${editId?'disabled':''}><span>${ROLE[r]}</span></label>`).join('')}</div>
  <p class="gn">Kode akses dibuat otomatis saat disimpan dan hanya tampil sekali.</p>
  <div id="kidsBox"><label>Anak yang tertaut</label><div class="checks">${KIDS.map(k=>`<label><input type="checkbox" value="${k.id}" ${u.childIds.includes(k.id)?'checked':''}>${k.nama} (kelas ${k.kelas})</label>`).join('')}</div></div>
  <div id="clsBox"><label for="uc">Kelas yang diampu</label><select id="uc">${kelas.map(c=>`<option ${c===u.kelas?'selected':''}>${c}</option>`).join('')}</select></div>
@@ -359,7 +359,7 @@ function render(){
  nav.innerHTML=NAV[me.role].map(n=>`<button data-page="${n[0]}" aria-current="${n[0]===page||(page==='kid'&&n[0]==='home')?'page':'false'}"><svg viewBox="0 0 24 24" aria-hidden="true">${IC[n[2]]}</svg><span>${n[1]}</span></button>`).join('');
  m.innerHTML=({home:homeView,kid:kidView,form:formPage,prog:progView,prof:profView,user:userPage,anak:anakPage})[page]();
  if(page==='form'&&$('#foto')){$('#foto').onchange=onFoto;$('#simpan').onclick=simpan;restoreDraft();drawPrev();$('#f').addEventListener('input',saveDraft);$('#f').addEventListener('change',saveDraft)}
- if(page==='user'){$('#ur').onchange=toggleBoxes;toggleBoxes()}
+ if(page==='user'){$('#roleChips').onchange=ev=>{$('#ur').value=ev.target.value;toggleBoxes()};toggleBoxes()}
  enhance()
 }
 function enhance(){document.querySelectorAll('#main select').forEach(x=>{if(x.dataset.e)return;x.dataset.e=1;x.classList.add('hid');const b=document.createElement('button');b.type='button';b.disabled=x.disabled;b.className='sel';b.dataset.sel=x.id;b.setAttribute('aria-haspopup','dialog');b.textContent=x.options[x.selectedIndex].text;x.after(b)})}

@@ -154,6 +154,8 @@ select.hid{display:none}
 #cards .mp{background:var(--card);border:2px solid var(--line);border-left-width:8px;border-radius:14px;padding:10px 12px 12px;margin:0 0 12px}
 .mph{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
 .prb{background:#fff3c4;color:#5b4500;border-radius:10px;padding:6px 10px;margin:6px 0 0}
+.prok{display:inline-flex;align-items:center;gap:6px;background:#d6f5d6;color:#0f4d1c;border-radius:99px;padding:2px 10px;font-weight:700;font-size:13px;margin-top:6px}
+.prc{margin-top:6px;padding:6px 10px;border-left:4px solid #5b6cf0;background:var(--card);color:var(--ink);border-radius:8px}
 </style>
 </head>
 <body>
@@ -196,7 +198,7 @@ const fmtCode=e=>{let v=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').sl
 function chips(name,list,def){return `<div class="chips">${list.map(v=>`<label><input type="radio" name="${name}" value="${v}" ${v===def?'checked':''}><span>${v}</span></label>`).join('')}</div>`}
 function repCard(r){const k=KIDS.find(x=>x.id===r.anak);
  return `<article class="card"><div class="rep-head"><h3>${esc(k.nama)}</h3><time>${fmt(r.tgl)}</time></div>${r.bintang?`<div class="bt">${star(18)}${esc(r.bintang)}</div>`:''}
- <div class="sec"><h4>Kegiatan belajar</h4>${r.mapel.map(m=>{const[bg,fg]=mc(m.mapel);return `<div class="mp" style="border-left-color:${bg}"><div class="tags"><span class="tag" style="background:${bg};color:${fg}">${esc(m.mapel)}</span><span class="tag">${esc(m.durasi)} menit</span><span class="tag">Capaian: ${esc(m.capaian)}</span></div><p><b>${esc(m.topik)}</b></p>${m.cat&&m.cat!=='-'?`<p>${esc(m.cat)}</p>`:''}${m.pr?`<p class="prb"><b>PR:</b> ${esc(m.pr)}${m.tenggat?` · dikumpulkan ${esc(sh(m.tenggat))}`:''}</p>`:''}</div>`}).join('')}</div>
+ <div class="sec"><h4>Kegiatan belajar</h4>${r.mapel.map(m=>{const[bg,fg]=mc(m.mapel);return `<div class="mp" style="border-left-color:${bg}"><div class="tags"><span class="tag" style="background:${bg};color:${fg}">${esc(m.mapel)}</span><span class="tag">${esc(m.durasi)} menit</span><span class="tag">Capaian: ${esc(m.capaian)}</span></div><p><b>${esc(m.topik)}</b></p>${m.cat&&m.cat!=='-'?`<p>${esc(m.cat)}</p>`:''}${prBlok(r,m)}</div>`}).join('')}</div>
  <div class="sec"><h4>Observasi harian</h4><div class="tags"><span class="tag" style="display:inline-flex;align-items:center;gap:6px;padding:3px 12px 3px 4px">${face(r.mood,28)}Suasana hati: ${esc(r.mood)}</span><span class="tag">Fokus ${r.fokus}/5</span></div><p><b>Sosial:</b> ${esc(r.sosial)}</p><p><b>Kemandirian:</b> ${esc(r.mandiri)}</p><p><b>Catatan:</b> ${esc(r.catO)}</p></div>
  ${r.foto.length&&exp(r)<=today?gone(r):r.foto.length?`<div class="sec"><h4>Dokumentasi</h4><div class="pics">${r.foto.map(f=>`<figure class="pic" style="margin:0">${f.src?`<img src="${f.src}" alt="${esc(f.cap)}">`:`<div class="ph2" aria-hidden="true">▣</div>`}<div>${esc(f.cap)}</div></figure>`).join('')}</div><small class="gn">Foto dihapus otomatis ${fmt(exp(r))}.</small></div>`:''}${me&&me.role==='pendamping'&&r.by===me.id?`<button class="sm" style="margin-top:12px" data-act="editlap" data-id="${r.id}">Ubah laporan</button>`:''}</article>`}
 function pet(c,s){const b=c==='none'?'':`<path d="M4 98V56Q4 18 60 18Q116 18 116 56V98Z" fill="${c}"/>`;return `<svg viewBox="0 0 120 100" width="${s}" height="${Math.round(s*5/6)}" aria-hidden="true">${b}<ellipse cx="55" cy="13" rx="8" ry="5.5" fill="#fffbe9"/><ellipse cx="65" cy="10" rx="6" ry="4.5" fill="#fffbe9"/><g fill="none" stroke="#3b4170" stroke-width="4.5" stroke-linecap="round"><path d="M26 33Q36 26 48 33"/><path d="M72 33Q84 26 94 33"/></g><circle cx="35" cy="60" r="23" fill="#fff"/><circle cx="85" cy="60" r="23" fill="#fff"/><circle cx="37" cy="62" r="13" fill="#3b4170"/><circle cx="83" cy="62" r="13" fill="#3b4170"/><circle cx="32" cy="56" r="4.5" fill="#fff"/><circle cx="78" cy="56" r="4.5" fill="#fff"/><circle cx="55" cy="92" r="2.2" fill="#3b4170"/><circle cx="65" cy="92" r="2.2" fill="#3b4170"/></svg>`}
@@ -239,11 +241,32 @@ function drawCards(){const e=$('#cards');if(!e)return;
  <label>PR dikumpulkan tanggal (opsional)</label><input data-f="tenggat" type="date" value="${esc(c.tenggat||'')}"></div>`}).join(''):'<p class="gn" style="margin:0 0 8px">Belum ada mata pelajaran. Ketuk tombol di bawah untuk menambah.</p>'}
 function cardInput(e){const el=e.target,box=el.closest&&el.closest('.mp');if(!box||box.dataset.i===undefined)return;const c=cards[+box.dataset.i];if(!c)return;
  if(el.type==='radio')c.capaian=el.value;else if(el.dataset.f==='topik')c.topik=el.value;else if(el.dataset.f==='durasi')c.durasi=el.value;else if(el.dataset.f==='cat')c.cat=el.value;else if(el.dataset.f==='pr')c.pr=el.value;else if(el.dataset.f==='tenggat')c.tenggat=el.value}
+const cek='<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#0f4d1c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const shd=iso=>new Date(iso).toLocaleDateString('id-ID',{day:'numeric',month:'short'});
+function prTools(r,m){if(!(me&&me.role==='pendamping'&&r.by===me.id&&m.id))return '';
+ return `<div style="margin-top:8px"><button class="sm" data-act="prselesai" data-id="${m.id}">${m.selesai?'Ubah catatan atau status':'Tandai selesai atau beri catatan'}</button></div>`}
+function prBlok(r,m){if(!m.pr)return '';
+ return `<div class="prb"><b>PR:</b> ${esc(m.pr)}${m.tenggat?` · dikumpulkan ${esc(sh(m.tenggat))}`:''}${m.selesai?`<div class="prok">${cek} Sudah dikumpulkan ${esc(shd(m.selesai))}</div>`:''}${m.prcat?`<div class="prc"><b>Catatan pendamping:</b> ${esc(m.prcat)}</div>`:''}${prTools(r,m)}</div>`}
 function prAktif(id){const l=[];
- kr(id).forEach(r=>r.mapel.forEach(m=>{if(!m.pr)return;const aktif=m.tenggat?m.tenggat>=today:r.tgl>=addDay(today,-7);if(aktif)l.push({tgl:r.tgl,m})}));
+ kr(id).forEach(r=>r.mapel.forEach(m=>{if(!m.pr)return;
+  const aktif=m.selesai?(Date.now()-new Date(m.selesai).getTime()<7*864e5):(m.tenggat?m.tenggat>=today:r.tgl>=addDay(today,-7));
+  if(aktif)l.push({tgl:r.tgl,m,r})}));
  if(!l.length)return '';
- l.sort((a,b)=>(a.m.tenggat||'9999').localeCompare(b.m.tenggat||'9999'));
- return `<div class="card"><h3>PR yang masih berjalan</h3>${l.map(x=>{const[bg,fg]=mc(x.m.mapel);return `<div class="mp" style="border-left-color:${bg}"><div class="tags"><span class="tag" style="background:${bg};color:${fg}">${esc(x.m.mapel)}</span><span class="tag">${x.m.tenggat?'Dikumpulkan '+esc(sh(x.m.tenggat)):'Diberikan '+esc(sh(x.tgl))}</span></div><p>${esc(x.m.pr)}</p></div>`}).join('')}</div>`}
+ l.sort((a,b)=>((a.m.selesai?'z':'a')+(a.m.tenggat||'9999')).localeCompare((b.m.selesai?'z':'a')+(b.m.tenggat||'9999')));
+ return `<div class="card"><h3>PR terbaru</h3>${l.map(x=>{const[bg,fg]=mc(x.m.mapel),m=x.m;return `<div class="mp" style="border-left-color:${bg}"><div class="tags"><span class="tag" style="background:${bg};color:${fg}">${esc(m.mapel)}</span><span class="tag">${m.tenggat?'Dikumpulkan '+esc(sh(m.tenggat)):'Diberikan '+esc(sh(x.tgl))}</span>${m.selesai?`<span class="prok">${cek} Sudah dikumpulkan</span>`:''}</div><p>${esc(m.pr)}</p>${m.prcat?`<div class="prc"><b>Catatan pendamping:</b> ${esc(m.prcat)}</div>`:''}${prTools(x.r,m)}</div>`}).join('')}</div>`}
+function openPR(id){let f=null;reports.forEach(r=>r.mapel.forEach(m=>{if(m.id===id)f={r,m}}));if(!f)return;
+ const{m}=f,p=$('#picker');p.dataset.lock=1;
+ p.innerHTML=`<div class="pop pk" role="dialog" aria-label="Catatan PR"><b>PR ${esc(m.mapel)}</b><p style="margin:2px 0 6px">${esc(m.pr)}</p>
+ <label for="prc" style="margin-top:6px">Catatan untuk orang tua (opsional)</label><textarea id="prc" maxlength="500" placeholder="Contoh: PR sudah lengkap dan rapi. Terima kasih sudah mendampingi.">${esc(m.prcat||'')}</textarea>
+ ${m.selesai?`<button type="button" class="primary" data-act="prsimpan" data-id="${m.id}" data-mode="catatan">Simpan catatan</button><button type="button" class="sm" style="width:100%;margin-top:8px" data-act="prsimpan" data-id="${m.id}" data-mode="batal">Batalkan status selesai</button>`:`<button type="button" class="primary" data-act="prsimpan" data-id="${m.id}" data-mode="selesai">Tandai selesai (sudah dikumpulkan)</button><button type="button" class="sm" style="width:100%;margin-top:8px" data-act="prsimpan" data-id="${m.id}" data-mode="catatan">Simpan catatan saja</button>`}
+ <button type="button" class="sm" style="width:100%;margin-top:8px" data-act="closepick">Batal</button></div>`;p.hidden=false}
+async function prSimpan(id,mode){const note=($('#prc')?$('#prc').value.trim():'')||null,patch={pr_catatan:note};
+ if(mode==='selesai')patch.pr_selesai_pada=new Date().toISOString();
+ if(mode==='batal')patch.pr_selesai_pada=null;
+ const{data,error}=await sb.from('laporan_mapel').update(patch).eq('id',id).select('id');
+ if(error||!data||!data.length){toast(error?error.message:'Tidak bisa menyimpan.',true,'Gagal menyimpan');return}
+ const p=$('#picker');p.hidden=true;delete p.dataset.lock;await loadReports();render();
+ toast(mode==='selesai'?'PR ditandai selesai. Orang tua bisa melihatnya.':mode==='batal'?'Status selesai dibatalkan.':'Catatan sudah disimpan.',false,'Tersimpan!')}
 function openMapel(){const p=$('#picker');p.removeAttribute('data-lock');const pakai=cards.map(c=>c.mapel),sisa=MAPEL.filter(m=>!pakai.includes(m));
  p.innerHTML=`<div class="pop pk" role="dialog" aria-label="Pilih mata pelajaran"><b>Pilih mata pelajaran</b>${sisa.length?sisa.map(m=>{const[bg]=mc(m);return `<button type="button" class="opt" style="border-left:8px solid ${bg}" data-act="pilihmapel" data-m="${esc(m)}">${esc(m)}</button>`}).join(''):'<p>Semua mata pelajaran sudah ditambahkan.</p>'}<button type="button" class="sm" style="width:100%;margin-top:10px" data-act="closepick">Tutup</button></div>`;p.hidden=false}
 const empty=t=>`<div class="empty">${pet('#b6ee00',100)}<p>${t}</p></div>`;
@@ -326,7 +349,7 @@ async function loadReports(){
  const paths=[];data.forEach(r=>(r.foto||[]).filter(f=>f.kedaluwarsa>today).forEach(f=>paths.push(f.path)));
  const urls={};
  if(paths.length){const{data:su}=await sb.storage.from('foto').createSignedUrls(paths,3600);(su||[]).forEach(u=>{if(u.signedUrl)urls[u.path]=u.signedUrl})}
- reports=data.map(r=>({id:r.id,by:r.pendamping_id,anak:r.anak_id,tgl:r.tanggal,mapel:(()=>{const m=(r.laporan_mapel||[]).slice().sort((a,b)=>a.id-b.id).map(x=>({mapel:x.mapel,topik:x.topik,durasi:x.durasi_menit,capaian:x.capaian,cat:x.catatan,pr:x.pr||'',tenggat:x.pr_tenggat||''}));return m.length?m:(r.topik?[{mapel:'Lainnya',topik:r.topik,durasi:r.durasi_menit||0,capaian:r.capaian||'Tercapai',cat:r.catatan_belajar||'-'}]:[])})(),mood:r.mood,fokus:r.fokus,sosial:r.sosial,mandiri:r.kemandirian,catO:r.catatan_perilaku,bintang:r.bintang,foto:(r.foto||[]).filter(f=>f.kedaluwarsa>today).map(f=>({cap:f.keterangan,src:urls[f.path]}))}))}
+ reports=data.map(r=>({id:r.id,by:r.pendamping_id,anak:r.anak_id,tgl:r.tanggal,mapel:(()=>{const m=(r.laporan_mapel||[]).slice().sort((a,b)=>a.id-b.id).map(x=>({id:x.id,mapel:x.mapel,topik:x.topik,durasi:x.durasi_menit,capaian:x.capaian,cat:x.catatan,pr:x.pr||'',tenggat:x.pr_tenggat||'',selesai:x.pr_selesai_pada||null,prcat:x.pr_catatan||''}));return m.length?m:(r.topik?[{mapel:'Lainnya',topik:r.topik,durasi:r.durasi_menit||0,capaian:r.capaian||'Tercapai',cat:r.catatan_belajar||'-'}]:[])})(),mood:r.mood,fokus:r.fokus,sosial:r.sosial,mandiri:r.kemandirian,catO:r.catatan_perilaku,bintang:r.bintang,foto:(r.foto||[]).filter(f=>f.kedaluwarsa>today).map(f=>({cap:f.keterangan,src:urls[f.path]}))}))}
 const dataToBlob=u=>{const[h,b]=u.split(',');const bin=atob(b),a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:'image/jpeg'})};
 async function login(e){e.preventDefault();const b=e.target.querySelector('.primary');b.disabled=true;$('#err').textContent='';
  try{const{token_hash}=await fn(FN_LOGIN,{kode:$('#kode').value.trim()});
@@ -342,10 +365,10 @@ async function simpan(){const v=id=>$('#'+id).value.trim(),r=n=>document.querySe
  try{
   const anak=+v('anak');
   const f0={mood:r('mood'),fokus:+r('fokus'),sosial:v('sosial')||'-',kemandirian:v('mandiri')||'-',catatan_perilaku:v('catO')||'-',bintang:r('bintang')||null};
-  const baris=id=>cards.map(c=>({laporan_id:id,mapel:c.mapel,topik:String(c.topik).trim(),durasi_menit:+c.durasi||0,capaian:c.capaian,catatan:String(c.cat).trim()||'-',pr:String(c.pr||'').trim()||null,pr_tenggat:c.tenggat||null}));
+  const baris=id=>cards.map(c=>({laporan_id:id,mapel:c.mapel,topik:String(c.topik).trim(),durasi_menit:+c.durasi||0,capaian:c.capaian,catatan:String(c.cat).trim()||'-',pr:String(c.pr||'').trim()||null,pr_tenggat:c.tenggat||null,pr_selesai_pada:c.selesai||null,pr_catatan:String(c.prcat||'').trim()||null}));
   let lap;
   if(editLap){
-   const lama=(reports.find(x=>x.id===editLap)||{mapel:[]}).mapel.map(m=>({laporan_id:editLap,mapel:m.mapel,topik:m.topik,durasi_menit:+m.durasi||0,capaian:m.capaian,catatan:m.cat||'-',pr:m.pr||null,pr_tenggat:m.tenggat||null}));
+   const lama=(reports.find(x=>x.id===editLap)||{mapel:[]}).mapel.map(m=>({laporan_id:editLap,mapel:m.mapel,topik:m.topik,durasi_menit:+m.durasi||0,capaian:m.capaian,catatan:m.cat||'-',pr:m.pr||null,pr_tenggat:m.tenggat||null,pr_selesai_pada:m.selesai||null,pr_catatan:m.prcat||null}));
    const{data:up,error}=await sb.from('laporan').update(f0).eq('id',editLap).select('id');if(error)throw error;if(!up||!up.length)throw new Error('Laporan ini tidak bisa diubah.');lap={id:editLap};
    const d=await sb.from('laporan_mapel').delete().eq('laporan_id',editLap);if(d.error)throw d.error;
    const im=await sb.from('laporan_mapel').insert(baris(editLap));
@@ -396,7 +419,7 @@ function fillForm(){const r=reports.find(x=>x.id===editLap);if(!r){editLap=null;
  const set=(id,v)=>{const e=$('#'+id);if(e)e.value=v},kosong=t=>t==='-'?'':t;
  set('anak',r.anak);set('tgl',r.tgl);set('sosial',kosong(r.sosial));set('mandiri',kosong(r.mandiri));set('catO',kosong(r.catO));
  [['mood',r.mood],['fokus',String(r.fokus)],['bintang',r.bintang||'']].forEach(([n,v])=>{const x=document.querySelector(`input[name=${n}][value="${v}"]`);if(x)x.checked=true});
- cards=r.mapel.map(m=>({mapel:m.mapel,topik:m.topik,durasi:m.durasi,capaian:m.capaian,cat:m.cat==='-'?'':m.cat,pr:m.pr||'',tenggat:m.tenggat||''}));
+ cards=r.mapel.map(m=>({mapel:m.mapel,topik:m.topik,durasi:m.durasi,capaian:m.capaian,cat:m.cat==='-'?'':m.cat,pr:m.pr||'',tenggat:m.tenggat||'',selesai:m.selesai||null,prcat:m.prcat||''}));
  $('#anak').disabled=true;$('#tgl').disabled=true;
  const boleh=exp(r)>today;
  const lama=r.foto.length?`<div class="pics">${r.foto.map(f=>`<figure class="pic" style="margin:0">${f.src?`<img src="${f.src}" alt="${esc(f.cap)}">`:''}<div>${esc(f.cap)}</div></figure>`).join('')}</div>`:'';
@@ -506,6 +529,8 @@ document.addEventListener('click',async e=>{if(e.target.id==='picker'){if(!e.tar
  else if(d.act==='cancelk'){editKid=null;render()}
  else if(d.act==='delk')delKid(d.id)
  else if(d.act==='rmfoto'){pending.splice(+d.i,1);drawPrev();saveDraft()}
+ else if(d.act==='prselesai')openPR(+d.id)
+ else if(d.act==='prsimpan')prSimpan(+d.id,d.mode)
  else if(d.act==='addmapel')openMapel()
  else if(d.act==='pilihmapel'){cards.push({mapel:d.m,topik:'',durasi:30,capaian:'Tercapai',cat:'',pr:'',tenggat:''});$('#picker').hidden=true;drawCards();saveDraft()}
  else if(d.act==='rmmapel'){cards.splice(+d.i,1);drawCards();saveDraft()}

@@ -519,6 +519,70 @@ select.hid{display:none}
   ::-webkit-scrollbar-thumb{background:#e3ddc9;border-radius:99px;border:3px solid transparent;background-clip:content-box}
   ::-webkit-scrollbar-thumb:hover{background:#d3ccb2;background-clip:content-box}
 }
+
+/* ============================================================
+   MOTION v2 — gulir & perpindahan (murni CSS, tanpa JS)
+   ============================================================ */
+html{scroll-behavior:smooth}
+
+/* bar progres di atas saat halaman digulir */
+@supports (animation-timeline:scroll()){
+  body::after{
+    content:'';position:fixed;top:0;left:0;right:0;height:3px;z-index:60;pointer-events:none;
+    transform:scaleX(0);transform-origin:0 50%;
+    background:linear-gradient(90deg,#b6ee00,#7b6cff 58%,#ff9db0);
+    box-shadow:0 0 14px rgba(123,108,255,.5);
+    animation:scrollbarGrow linear both;
+    animation-timeline:scroll(root block);
+  }
+  @keyframes scrollbarGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+}
+
+/* masuk halaman: fade + geser (pakai properti `translate` agar tidak bentrok) */
+@keyframes rise{from{opacity:0;translate:0 12px}to{opacity:1;translate:0 0}}
+#main>*{animation:rise .38s cubic-bezier(.22,.9,.28,1.06) both}
+
+/* reveal bertahap saat elemen masuk viewport */
+@keyframes revealIn{from{transform:translateY(20px) scale(.982)}to{transform:none}}
+@supports (animation-timeline:view()){
+  #main>*,.wkc>*,.ulist>*,.pics>*{
+    animation:rise .38s cubic-bezier(.22,.9,.28,1.06) both,revealIn .9s cubic-bezier(.16,.84,.3,1) backwards;
+    animation-timeline:auto,view();
+    animation-range:normal,entry 4% entry 62%;
+  }
+}
+
+/* perpindahan menu: pil aktif "memantul", ikon pop */
+@keyframes pillIn{from{transform:scale(.94)}to{transform:none}}
+@keyframes iconPop{0%{transform:scale(.74) rotate(-9deg)}62%{transform:scale(1.07) rotate(2deg)}100%{transform:none}}
+.nav [aria-current=page]{animation:pillIn .32s cubic-bezier(.2,1.25,.45,1) both}
+.nav [aria-current=page] svg{animation:iconPop .44s cubic-bezier(.2,1.5,.4,1) both}
+
+/* login: lembar form naik, teks hero menyusul */
+@keyframes sheetUp{from{transform:translateY(28px);opacity:0}to{transform:none;opacity:1}}
+.lgw .sheet{animation:sheetUp .58s cubic-bezier(.16,.84,.3,1) both}
+.lgw .hero>*{animation:rise .55s cubic-bezier(.22,.9,.28,1.06) both}
+.lgw .hero>*:nth-child(2){animation-delay:.08s}
+.lgw .hero>*:nth-child(3){animation-delay:.16s}
+
+/* umpan balik sentuh */
+.primary:active,.sm:active,.opt:active,.rx:active,.nav button:active,.menu:active,.kids button:active,.chips span:active{transform:scale(.97)}
+.kc:active{transform:translateY(1px) scale(.988)}
+
+@media(hover:hover){
+  .card{transition:box-shadow .28s ease,transform .28s ease}
+  .card:hover{transform:translateY(-2px)}
+  .kc::after{transition:transform .45s ease,opacity .45s ease}
+  .kc:hover::after{transform:scale(1.35);opacity:.75}
+  .tag{transition:transform .2s ease}
+  .tag:hover{transform:translateY(-1px)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  body::after{display:none}
+  #main>*,.wkc>*,.ulist>*,.pics>*,.nav [aria-current=page],.nav [aria-current=page] svg,.lgw .sheet,.lgw .hero>*{animation:none}
+}
 </style>
 </head>
 <body>

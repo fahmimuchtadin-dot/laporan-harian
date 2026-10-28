@@ -170,7 +170,7 @@ let USERS=[],LINK_P=[],LINK_O=[];
 const ROLE={admin:'Admin',pendamping:'Pendamping',ortu:'Orang tua',wali:'Wali kelas'};
 const PFX={admin:'ADMN',pendamping:'PNDM',ortu:'ORTU',wali:'WALI'};
 let reports=[];
-let me=null,page='home',selKid=null,pending=[],editId=null,editKid=null,selWeek=null,selMon=null;
+let me=null,page='home',selKid=null,pending=[],editId=null,editKid=null,selWeek=null,selMon=null,editLap=null;
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmt=d=>new Date(d+'T00:00').toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
@@ -193,7 +193,7 @@ function repCard(r){const k=KIDS.find(x=>x.id===r.anak);
  return `<article class="card"><div class="rep-head"><h3>${esc(k.nama)}</h3><time>${fmt(r.tgl)}</time></div>
  <div class="sec"><h4>Kegiatan belajar</h4><div class="tags"><span class="tag">${r.durasi} menit</span><span class="tag">Capaian: ${esc(r.capaian)}</span></div><p><b>${esc(r.topik)}</b></p><p>${esc(r.catL)}</p></div>
  <div class="sec"><h4>Observasi harian</h4><div class="tags"><span class="tag" style="display:inline-flex;align-items:center;gap:6px;padding:3px 12px 3px 4px">${face(r.mood,28)}Suasana hati: ${esc(r.mood)}</span><span class="tag">Fokus ${r.fokus}/5</span></div><p><b>Sosial:</b> ${esc(r.sosial)}</p><p><b>Kemandirian:</b> ${esc(r.mandiri)}</p><p><b>Catatan:</b> ${esc(r.catO)}</p></div>
- ${r.foto.length&&exp(r)<=today?gone(r):r.foto.length?`<div class="sec"><h4>Dokumentasi</h4><div class="pics">${r.foto.map(f=>`<figure class="pic" style="margin:0">${f.src?`<img src="${f.src}" alt="${esc(f.cap)}">`:`<div class="ph2" aria-hidden="true">▣</div>`}<div>${esc(f.cap)}</div></figure>`).join('')}</div><small class="gn">Foto dihapus otomatis ${fmt(exp(r))}.</small></div>`:''}</article>`}
+ ${r.foto.length&&exp(r)<=today?gone(r):r.foto.length?`<div class="sec"><h4>Dokumentasi</h4><div class="pics">${r.foto.map(f=>`<figure class="pic" style="margin:0">${f.src?`<img src="${f.src}" alt="${esc(f.cap)}">`:`<div class="ph2" aria-hidden="true">▣</div>`}<div>${esc(f.cap)}</div></figure>`).join('')}</div><small class="gn">Foto dihapus otomatis ${fmt(exp(r))}.</small></div>`:''}${me&&me.role==='pendamping'&&r.by===me.id?`<button class="sm" style="margin-top:12px" data-act="editlap" data-id="${r.id}">Ubah laporan</button>`:''}</article>`}
 function pet(c,s){const b=c==='none'?'':`<path d="M4 98V56Q4 18 60 18Q116 18 116 56V98Z" fill="${c}"/>`;return `<svg viewBox="0 0 120 100" width="${s}" height="${Math.round(s*5/6)}" aria-hidden="true">${b}<ellipse cx="55" cy="13" rx="8" ry="5.5" fill="#fffbe9"/><ellipse cx="65" cy="10" rx="6" ry="4.5" fill="#fffbe9"/><g fill="none" stroke="#3b4170" stroke-width="4.5" stroke-linecap="round"><path d="M26 33Q36 26 48 33"/><path d="M72 33Q84 26 94 33"/></g><circle cx="35" cy="60" r="23" fill="#fff"/><circle cx="85" cy="60" r="23" fill="#fff"/><circle cx="37" cy="62" r="13" fill="#3b4170"/><circle cx="83" cy="62" r="13" fill="#3b4170"/><circle cx="32" cy="56" r="4.5" fill="#fff"/><circle cx="78" cy="56" r="4.5" fill="#fff"/><circle cx="55" cy="92" r="2.2" fill="#3b4170"/><circle cx="65" cy="92" r="2.2" fill="#3b4170"/></svg>`}
 const eyes2=()=>`<svg viewBox="0 0 70 38" width="64" height="35" aria-hidden="true"><g fill="none" stroke="#3b4170" stroke-width="3" stroke-linecap="round"><path d="M6 8Q16 2 27 8"/><path d="M43 8Q54 2 64 8"/></g><circle cx="19" cy="23" r="13" fill="#fff"/><circle cx="51" cy="23" r="13" fill="#fff"/><circle cx="20" cy="24" r="7.5" fill="#3b4170"/><circle cx="50" cy="24" r="7.5" fill="#3b4170"/><circle cx="17" cy="21" r="2.6" fill="#fff"/><circle cx="47" cy="21" r="2.6" fill="#fff"/></svg>`;
 function face(k,s){
@@ -235,7 +235,7 @@ function kidView(){const k=KIDS.find(x=>x.id===selKid),c=kc(k.id),s=stat(k.id);
  ${me.role==='pendamping'?'<button class="primary" style="margin:0 0 14px" data-page="form">Isi laporan hari ini</button>':''}
  ${repList(kr(k.id))}`}
 function formPage(){const ks=kids();if(!ks.length)return empty('Belum ada anak tertaut ke akun Anda.');if(!ks.find(k=>k.id===selKid))selKid=ks[0].id;
- return `<h2 class="ph">Isi laporan<small>Hanya untuk anak yang tertaut ke akun Anda</small></h2><form id="f" class="card" onsubmit="return false">
+ return `<h2 class="ph">${editLap?'Ubah laporan':'Isi laporan'}<small>${editLap?'Perbaiki isi laporan yang sudah disimpan':'Hanya untuk anak yang tertaut ke akun Anda'}</small></h2><form id="f" class="card" onsubmit="return false">
  <div class="gn" id="ds" aria-live="polite" style="margin:0 0 6px">Draf tersimpan otomatis di HP ini.</div><label for="anak">Anak yang didampingi</label><select id="anak">${ks.map(k=>`<option value="${k.id}" ${k.id===selKid?'selected':''}>${k.nama} (kelas ${k.kelas})</option>`).join('')}</select>
  <label for="tgl">Tanggal</label><input id="tgl" type="date" value="${today}">
  <div class="fcols"><fieldset><legend>Kegiatan belajar</legend><label for="topik">Materi atau topik</label><input id="topik" placeholder="Contoh: Membaca nyaring cerita pendek">
@@ -243,8 +243,8 @@ function formPage(){const ks=kids();if(!ks.length)return empty('Belum ada anak t
  <label for="catL">Catatan belajar</label><textarea id="catL"></textarea></fieldset>
  <fieldset><legend>Observasi harian</legend><label>Suasana hati</label>${moodPick()}<label>Tingkat fokus</label>${chips('fokus',['1','2','3','4','5'],'3')}
  <label for="sosial">Interaksi sosial</label><input id="sosial"><label for="mandiri">Kemandirian</label><input id="mandiri"><label for="catO">Catatan perilaku</label><textarea id="catO"></textarea></fieldset></div>
- <fieldset><legend>Dokumentasi</legend><label for="foto">Foto kegiatan</label><input id="foto" type="file" accept="image/*" multiple><small class="gn">Foto wajib dikecilkan (maks. 600 KB) saat dipilih dan dihapus 3 hari setelah tanggal laporan. Catatan teks tetap tersimpan.</small><div class="pics" id="prev"></div></fieldset>
- <button class="primary" id="simpan">Simpan laporan</button></form>`}
+ <fieldset><legend>Dokumentasi</legend><div id="oldPics"></div><label for="foto">Foto kegiatan</label><input id="foto" type="file" accept="image/*" multiple><small class="gn">Foto wajib dikecilkan (maks. 600 KB) saat dipilih dan dihapus 3 hari setelah tanggal laporan. Catatan teks tetap tersimpan.</small><div class="pics" id="prev"></div></fieldset>
+ <button class="primary" id="simpan">${editLap?'Simpan perubahan':'Simpan laporan'}</button>${editLap?'<button type="button" class="sm" style="margin-top:8px;width:100%" data-act="cancellap">Batal</button>':''}</form>`}
 function progView(){const ks=kids();if(!ks.length)return empty('Belum ada anak tertaut ke akun Anda.');if(!ks.find(k=>k.id===selKid))selKid=ks[0].id;
  const cm=today.slice(0,7),all=kr(selKid),ms=[...new Set([cm,...all.map(r=>r.tgl.slice(0,7))])].sort().reverse();
  if(!ms.includes(selMon))selMon=cm;
@@ -309,18 +309,20 @@ async function simpan(){const v=id=>$('#'+id).value.trim(),r=n=>document.querySe
  const btn=$('#simpan');btn.disabled=true;btn.textContent='Menyimpan...';
  try{
   const anak=+v('anak');
-  const{data:lap,error}=await sb.from('laporan').insert({anak_id:anak,pendamping_id:me.id,tanggal:v('tgl')||today,topik:v('topik'),durasi_menit:+v('dur')||0,capaian:v('cap'),catatan_belajar:v('catL')||'-',mood:r('mood'),fokus:+r('fokus'),sosial:v('sosial')||'-',kemandirian:v('mandiri')||'-',catatan_perilaku:v('catO')||'-'}).select('id').single();
-  if(error)throw error;
+  const f0={topik:v('topik'),durasi_menit:+v('dur')||0,capaian:v('cap'),catatan_belajar:v('catL')||'-',mood:r('mood'),fokus:+r('fokus'),sosial:v('sosial')||'-',kemandirian:v('mandiri')||'-',catatan_perilaku:v('catO')||'-'};
+  let lap;
+  if(editLap){const{data:up,error}=await sb.from('laporan').update(f0).eq('id',editLap).select('id');if(error)throw error;if(!up||!up.length)throw new Error('Laporan ini tidak bisa diubah.');lap={id:editLap}}
+  else{const{data,error}=await sb.from('laporan').insert({anak_id:anak,pendamping_id:me.id,tanggal:v('tgl')||today,...f0}).select('id').single();if(error)throw error;lap=data}
   let gagal=0;
   for(const f of pending){try{
    const blob=dataToBlob(f.src),path=`${anak}/${lap.id}/${crypto.randomUUID()}.jpg`;
    const up=await sb.storage.from('foto').upload(path,blob,{contentType:'image/jpeg'});if(up.error)throw up.error;
    const ins=await sb.from('foto').insert({laporan_id:lap.id,path,keterangan:f.cap||'',ukuran_byte:blob.size});if(ins.error)throw ins.error
   }catch(_){gagal++}}
-  selKid=anak;pending=[];try{localStorage.removeItem(draftKey())}catch(_){}
+  selKid=anak;pending=[];const wasEdit=!!editLap;editLap=null;if(!wasEdit){try{localStorage.removeItem(draftKey())}catch(_){}}
   await loadReports();page='kid';render();window.scrollTo(0,0);
-  if(gagal)toast(gagal+' foto gagal diunggah, tapi laporan sudah tersimpan.',true,'Sebagian tersimpan');else toast('Laporan disimpan')
- }catch(x){btn.disabled=false;btn.textContent='Simpan laporan';toast(x.message||'Gagal menyimpan',true,'Gagal menyimpan')}}
+  if(gagal)toast(gagal+' foto gagal diunggah, tapi laporan sudah tersimpan.',true,'Sebagian tersimpan');else toast(wasEdit?'Perubahan sudah disimpan':'Laporan disimpan',false,wasEdit?'Tersimpan!':undefined)
+ }catch(x){btn.disabled=false;btn.textContent=editLap?'Simpan perubahan':'Simpan laporan';toast(x.message||'Gagal menyimpan',true,'Gagal menyimpan')}}
 async function saveUser(){const nama=$('#un').value.trim(),role=$('#ur').value;
  if(!nama){$('#un').focus();toast('Isi nama pengguna dulu',true);return}
  const childIds=(role==='pendamping'||role==='ortu')?[...document.querySelectorAll('#kidsBox input:checked')].map(i=>+i.value):[];
@@ -348,6 +350,16 @@ async function saveKid(){const nama=$('#kn').value.trim(),kelas=$('#kk').value.t
 async function delKid(id){id=+id;const{error}=await sb.from('anak').delete().eq('id',id);
  if(error){toast(error.code==='23503'?'Anak ini sudah punya laporan, jadi tidak bisa dihapus.':error.message,true);return}
  if(selKid===id)selKid=null;editKid=null;await loadAll();render();toast('Profil anak sudah dihapus',false,'Terhapus')}
+function fillForm(){const r=reports.find(x=>x.id===editLap);if(!r){editLap=null;return}
+ const set=(id,v)=>{const e=$('#'+id);if(e)e.value=v},kosong=t=>t==='-'?'':t;
+ set('anak',r.anak);set('tgl',r.tgl);set('topik',r.topik);set('dur',r.durasi);set('cap',r.capaian);set('catL',kosong(r.catL));set('sosial',kosong(r.sosial));set('mandiri',kosong(r.mandiri));set('catO',kosong(r.catO));
+ [['mood',r.mood],['fokus',String(r.fokus)]].forEach(([n,v])=>{const x=document.querySelector(`input[name=${n}][value="${v}"]`);if(x)x.checked=true});
+ $('#anak').disabled=true;$('#tgl').disabled=true;
+ const boleh=exp(r)>today;
+ const lama=r.foto.length?`<div class="pics">${r.foto.map(f=>`<figure class="pic" style="margin:0">${f.src?`<img src="${f.src}" alt="${esc(f.cap)}">`:''}<div>${esc(f.cap)}</div></figure>`).join('')}</div>`:'';
+ $('#oldPics').innerHTML=lama+(boleh?'':'<small class="gn">Foto tidak bisa ditambahkan karena laporan ini sudah lewat 3 hari.</small>');
+ if(!boleh)$('#foto').disabled=true;
+ const ds=$('#ds');if(ds)ds.textContent='Mengubah laporan '+fmt(r.tgl)+'. Anak dan tanggal tidak bisa diubah.'}
 function toggleBoxes(){const r=$('#ur').value;$('#kidsBox').hidden=!(r==='pendamping'||r==='ortu');$('#clsBox').hidden=r!=='wali'}
 
 function render(){
@@ -358,7 +370,7 @@ function render(){
  if(page!=='kid'&&!NAV[me.role].some(n=>n[0]===page))page=NAV[me.role][0][0];
  nav.innerHTML=NAV[me.role].map(n=>`<button data-page="${n[0]}" aria-current="${n[0]===page||(page==='kid'&&n[0]==='home')?'page':'false'}"><svg viewBox="0 0 24 24" aria-hidden="true">${IC[n[2]]}</svg><span>${n[1]}</span></button>`).join('');
  m.innerHTML=({home:homeView,kid:kidView,form:formPage,prog:progView,prof:profView,user:userPage,anak:anakPage})[page]();
- if(page==='form'&&$('#foto')){$('#foto').onchange=onFoto;$('#simpan').onclick=simpan;restoreDraft();drawPrev();$('#f').addEventListener('input',saveDraft);$('#f').addEventListener('change',saveDraft)}
+ if(page==='form'&&$('#foto')){$('#foto').onchange=onFoto;$('#simpan').onclick=simpan;editLap?fillForm():restoreDraft();drawPrev();$('#f').addEventListener('input',saveDraft);$('#f').addEventListener('change',saveDraft)}
  if(page==='user'){$('#roleChips').onchange=ev=>{$('#ur').value=ev.target.value;toggleBoxes()};toggleBoxes()}
  enhance()
 }
@@ -392,7 +404,7 @@ const jam=t=>new Date(t).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-di
 const DF=['anak','tgl','topik','dur','cap','catL','sosial','mandiri','catO'];
 function showDraft(msg){const e=$('#ds');if(e)e.innerHTML=msg+(msg.includes('·')?' <button type="button" class="sm" style="padding:2px 9px;font-size:12px" data-act="cleardraft">Hapus draf</button>':'')}
 function saveDraft(){clearTimeout(dT);dT=setTimeout(()=>{
- if(!me||page!=='form'||!$('#f'))return;
+ if(!me||page!=='form'||!$('#f')||editLap)return;
  const v={};DF.forEach(id=>v[id]=$('#'+id).value);
  const pk=n=>{const x=document.querySelector(`input[name=${n}]:checked`);return x?x.value:''};
  const d={t:Date.now(),v,mood:pk('mood'),fokus:pk('fokus'),foto:pending};
@@ -426,9 +438,9 @@ function drawPrev(){const p=$('#prev');if(!p)return;p.innerHTML=pending.map((f,i
 
 function toast(t,err,h){const e=$('#toast');e.innerHTML=`<div class="pop${err?' bad':''}">${face(err?'Bingung':'Senang',76)}<b>${h||(err?'Oops!':'Berhasil!')}</b><p>${esc(t)}</p></div>`;e.hidden=false;e.onclick=()=>e.hidden=true;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,err?3200:2200)}
 document.addEventListener('click',async e=>{if(e.target.id==='picker'){if(!e.target.dataset.lock)e.target.hidden=true;return}const b=e.target.closest('button');if(!b)return;const d=b.dataset;if(d.sel){openPick(d.sel);return}if(d.opt!==undefined){pickOpt(d);return}
- if(d.act==='out'){await sb.auth.signOut();me=null;USERS=[];reports=[];KIDS.length=0;page='home';pending=[];editId=null;render();toast('Anda sudah keluar',false,'Sampai jumpa!')}
+ if(d.act==='out'){await sb.auth.signOut();me=null;USERS=[];reports=[];KIDS.length=0;page='home';pending=[];editId=null;editLap=null;render();toast('Anda sudah keluar',false,'Sampai jumpa!')}
  else if(d.act==='help')toast('Hubungi admin sekolah untuk bantuan',false,'Bantuan')
- else if(d.page){page=d.page;render();window.scrollTo(0,0)}
+ else if(d.page){editLap=null;page=d.page;render();window.scrollTo(0,0)}
  else if(d.kid){selKid=+d.kid;page='kid';render();window.scrollTo(0,0)}
  else if(d.kid2){selKid=+d.kid2;render()}
  else if(d.mo){selMon=d.mo;render()}
@@ -441,6 +453,8 @@ document.addEventListener('click',async e=>{if(e.target.id==='picker'){if(!e.tar
  else if(d.act==='cancelk'){editKid=null;render()}
  else if(d.act==='delk')delKid(d.id)
  else if(d.act==='rmfoto'){pending.splice(+d.i,1);drawPrev();saveDraft()}
+ else if(d.act==='editlap'){const r=reports.find(x=>x.id===+d.id);if(r){editLap=r.id;selKid=r.anak;pending=[];page='form';render();window.scrollTo(0,0)}}
+ else if(d.act==='cancellap'){editLap=null;pending=[];page='kid';render();window.scrollTo(0,0)}
  else if(d.act==='cleardraft'){try{localStorage.removeItem(draftKey())}catch(_){}pending=[];render();toast('Draf sudah dihapus',false,'Terhapus')}
  else if(d.act==='edit'){editId=d.id;render();$('#uf').scrollIntoView({behavior:'smooth'})}
  else if(d.act==='cancel'){editId=null;render()}

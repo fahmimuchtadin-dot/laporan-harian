@@ -349,7 +349,7 @@ legend{font:700 17px Fredoka;padding-right:10px;color:var(--ink)}
   transition:transform .1s,box-shadow .1s,border-color .15s,background .15s,color .15s;
 }
 .opt:active{transform:translateY(2px);box-shadow:0 0 0 var(--line)}
-.opt[aria-checked=true]{border-color:#84d8ff;background:var(--soft-2);color:var(--navy-dark);box-shadow:0 2px 0 #b6e8ff}
+.opt[aria-checked=true]{border-color:#84d8ff;background-color:var(--soft-2);color:var(--navy-dark);box-shadow:0 2px 0 #b6e8ff}
 
 /* ---------- select pengganti ---------- */
 select.hid{display:none}
@@ -371,7 +371,7 @@ select.hid{display:none}
   font-size:12px;font-weight:800;cursor:pointer;color:var(--ink-2);
   transition:background .12s,border-color .12s,transform .12s;
 }
-.moods input:checked+span{border-color:#84d8ff;background:var(--soft-2);color:var(--navy-dark)}
+.moods input:checked+span{border-color:#84d8ff;background-color:var(--soft-2);color:var(--navy-dark)}
 .moods input:focus-visible+span{outline:3px solid #84d8ff;outline-offset:2px}
 
 /* ---------- minggu / kalender ---------- */
@@ -425,7 +425,7 @@ select.hid{display:none}
 }
 .rx:active{transform:translateY(2px);box-shadow:0 0 0 var(--line)}
 .rx span{font-size:26px;line-height:1.15}
-.rx[aria-pressed=true]{border-color:#84d8ff;background:var(--soft-2);color:var(--navy-dark);box-shadow:0 2px 0 #b6e8ff}
+.rx[aria-pressed=true]{border-color:#84d8ff;background-color:var(--soft-2);color:var(--navy-dark);box-shadow:0 2px 0 #b6e8ff}
 
 /* ---------- animasi ---------- */
 @keyframes pop{from{transform:scale(.92) translateY(6px);opacity:0}to{transform:none;opacity:1}}
@@ -437,9 +437,9 @@ select.hid{display:none}
   .kc:hover{transform:translateY(-2px);box-shadow:0 6px 0 rgba(0,0,0,.12)}
   .kc:hover::after{transform:scale(1.3);opacity:.8}
   .primary:hover{filter:brightness(1.04)}
-  .opt:hover,.sm:hover,.pills button:hover,.kids button:hover,.rx:hover{border-color:#c9c9c9;background:#fafafa}
+  .opt:hover,.sm:hover,.pills button:hover,.kids button:hover,.rx:hover{border-color:#c9c9c9;background-color:#fafafa}
   .opt:hover,.rx:hover{box-shadow:0 2px 0 #dcdcdc}
-  .chips span:hover{border-color:#c9c9c9;background:#fafafa}
+  .chips span:hover{border-color:#c9c9c9;background-color:#fafafa}
   .nav button:hover:not([aria-current=page]){background:var(--bg-soft)}
   .menu:hover{background:var(--bg-soft)}
 }
@@ -538,6 +538,52 @@ html{scroll-behavior:smooth}
   *{transition-duration:.01ms!important}
 }
 
+/* ============================================================
+   MASKOT LOGIN — mata bergerak (kedip + lihat sekeliling)
+   Circle 1-2 = bola mata · 3-4 = pupil · 5-6 = kilau
+   ============================================================ */
+@keyframes eyeBlink{
+  0%,89%,100%{transform:scaleY(1)}
+  91%{transform:scaleY(.06)}
+  93%{transform:scaleY(1)}
+  94.5%{transform:scaleY(.08)}
+  96%,100%{transform:scaleY(1)}
+}
+@keyframes pupilLife{
+  0%,6%{transform:translate(0,0) scaleY(1)}
+  10%,18%{transform:translate(-5px,1px) scaleY(1)}
+  24%,31%{transform:translate(5px,1px) scaleY(1)}
+  36%,43%{transform:translate(0,-4px) scaleY(1)}
+  48%,60%{transform:translate(0,0) scaleY(1)}
+  65%,71%{transform:translate(-4px,-2px) scaleY(1)}
+  76%,88%{transform:translate(0,0) scaleY(1)}
+  91%{transform:translate(0,0) scaleY(.06)}
+  93%{transform:translate(0,0) scaleY(1)}
+  94.5%{transform:translate(0,0) scaleY(.08)}
+  96%,100%{transform:translate(0,0) scaleY(1)}
+}
+.lgw .hero svg circle:nth-of-type(1),
+.lgw .hero svg circle:nth-of-type(2){
+  transform-box:fill-box;transform-origin:center;
+  animation:eyeBlink 6.5s cubic-bezier(.45,0,.35,1) infinite;
+}
+.lgw .hero svg circle:nth-of-type(3),
+.lgw .hero svg circle:nth-of-type(4),
+.lgw .hero svg circle:nth-of-type(5),
+.lgw .hero svg circle:nth-of-type(6){
+  transform-box:fill-box;transform-origin:center;
+  animation:pupilLife 6.5s cubic-bezier(.45,0,.35,1) infinite;
+}
+
+@media(prefers-reduced-motion:reduce){
+  .lgw .hero svg circle:nth-of-type(1),
+  .lgw .hero svg circle:nth-of-type(2),
+  .lgw .hero svg circle:nth-of-type(3),
+  .lgw .hero svg circle:nth-of-type(4),
+  .lgw .hero svg circle:nth-of-type(5),
+  .lgw .hero svg circle:nth-of-type(6){animation:none}
+}
+
 /* ---------- scrollbar halus ---------- */
 @media(pointer:fine){
   ::-webkit-scrollbar{width:11px;height:11px}
@@ -545,6 +591,10 @@ html{scroll-behavior:smooth}
   ::-webkit-scrollbar-thumb{background:#e0e0e0;border-radius:99px;border:3px solid transparent;background-clip:content-box}
   ::-webkit-scrollbar-thumb:hover{background:#cfcfcf;background-clip:content-box}
 }
+</style>
+<style id="faces">
+/* FACES:START â€” diisi otomatis oleh tools\build-faces.ps1 */
+/* FACES:END */
 </style>
 </head>
 <body>

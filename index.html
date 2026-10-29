@@ -614,6 +614,36 @@ html{scroll-behavior:smooth}
   ::-webkit-scrollbar-thumb{background:#8fd63a;border-radius:99px;border:3px solid transparent;background-clip:content-box}
   ::-webkit-scrollbar-thumb:hover{background:#a6e85a;background-clip:content-box}
 }
+/* ---- Perapian kartu laporan (tanpa mengubah logika) ---- */
+.mpd{margin:10px 0 0;background:var(--soft);border:2px solid var(--line);border-left:6px solid var(--c,var(--line));border-radius:14px;overflow:hidden}
+.mps{list-style:none;cursor:pointer;display:block;position:relative;padding:10px 38px 10px 12px}
+.mps::-webkit-details-marker{display:none}
+.mps::after{content:'';position:absolute;right:15px;top:17px;width:8px;height:8px;border-right:2.5px solid var(--mute);border-bottom:2.5px solid var(--mute);transform:rotate(45deg);transition:transform .15s}
+.mpd[open]>.mps::after{transform:rotate(-135deg);top:21px}
+.mpr{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
+.mpn{padding:3px 10px;border-radius:99px;font-weight:800;font-size:12px;line-height:1.3}
+.mpm{font-size:12px;font-weight:800;color:var(--mute)}
+.cap{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:800;color:var(--ink-2)}
+.cap i{width:9px;height:9px;border-radius:50%;background:#2fb344;display:inline-block}
+.cap.mid i{background:#f0a500}.cap.low i{background:#e5484d}
+.prm{font-size:11px;font-weight:800;padding:2px 8px;border-radius:99px;background:var(--card);border:2px solid var(--line);color:var(--ink-2)}
+.prm.todo{background:#ffe9a8;border-color:#f0c24b;color:#5b4500}
+.mpt{display:block;margin-top:6px;font-weight:800;font-size:15.5px;line-height:1.35;color:var(--ink)}
+.mpb{padding:0 12px 12px}
+.mpb p{margin:0}
+.cat{font-size:14px;line-height:1.5;color:var(--ink-2);font-weight:600}
+.cat.clip{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.lnk{border:0;background:none;padding:2px 0;margin-top:2px;font:800 13px Nunito,sans-serif;color:var(--navy,#1f5f00);cursor:pointer;text-decoration:underline}
+.prb{margin:10px 0 0;padding:8px 10px;border:0;border-radius:10px;background:var(--card);font-size:14px;line-height:1.45;font-weight:600}
+.prb.todo{background:var(--warn-bg,#f1f9d0);border-left:4px solid #e0b100}
+.prb.ok{background:transparent;border:2px dashed var(--line)}
+.prh{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin-bottom:3px}
+.prl{font-size:11px;font-weight:800;letter-spacing:.06em}
+.prd{font-size:12px;font-weight:800;color:var(--mute)}
+.prb .prok{margin-top:0}
+.prt{color:var(--ink-2)}
+.sec{margin-top:12px}
+.sec p{font-size:14.5px;line-height:1.45;margin:2px 0}
 </style>
 <style id="faces">
 /* FACES:START - stiker emoticon (Naver Talk) + ikon tab bar, build 2026-10-29 */
@@ -709,7 +739,7 @@ const fmtCode=e=>{let v=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').sl
 function chips(name,list,def){return `<div class="chips">${list.map(v=>`<label><input type="radio" name="${name}" value="${v}" ${v===def?'checked':''}><span>${v}</span></label>`).join('')}</div>`}
 function repCard(r){const k=KIDS.find(x=>x.id===r.anak);
  return `<article class="card"><div class="rep-head"><h3>${esc(k.nama)}</h3><time>${fmt(r.tgl)}</time></div>${r.bintang?`<div class="bt">${star(18)}${esc(r.bintang)}</div>`:''}
- <div class="sec"><h4>Kegiatan belajar</h4>${r.mapel.map(m=>{const[bg,fg]=mc(m.mapel);return `<div class="mp" style="border-left-color:${bg}"><div class="tags"><span class="tag" style="background:${bg};color:${fg}">${esc(m.mapel)}</span><span class="tag">${esc(m.durasi)} menit</span><span class="tag">Capaian: ${esc(m.capaian)}</span></div><p><b>${esc(m.topik)}</b></p>${m.cat&&m.cat!=='-'?`<p>${esc(m.cat)}</p>`:''}${prBlok(r,m)}</div>`}).join('')}</div>
+ <div class="sec"><h4>Kegiatan belajar</h4>${r.mapel.map(m=>mapelKartu(r,m)).join('')}</div>
  <div class="sec"><h4>Observasi harian</h4><div class="tags"><span class="tag" style="display:inline-flex;align-items:center;gap:6px;padding:3px 12px 3px 4px">${face(r.mood,28)}Suasana hati: ${esc(r.mood)}</span><span class="tag">Fokus ${r.fokus}/5</span></div><p><b>Sosial:</b> ${esc(r.sosial)}</p><p><b>Kemandirian:</b> ${esc(r.mandiri)}</p><p><b>Catatan:</b> ${esc(r.catO)}</p></div>
  ${r.foto.length&&exp(r)<=today?gone(r):r.foto.length?`<div class="sec"><h4>Dokumentasi</h4><div class="pics">${r.foto.map(f=>`<figure class="pic" style="margin:0">${f.src?`<img src="${f.src}" alt="${esc(f.cap)}">`:`<div class="ph2" aria-hidden="true">▣</div>`}<div>${esc(f.cap)}</div></figure>`).join('')}</div><small class="gn">Foto dihapus otomatis ${fmt(exp(r))}.</small></div>`:''}${rxBlok(r)}${me&&me.role==='pendamping'&&r.by===me.id?`<button class="sm" style="margin-top:12px" data-act="editlap" data-id="${r.id}">Ubah laporan</button>`:''}</article>`}
 function pet(c,s){const b=c==='none'?'':`<path d="M4 98V56Q4 18 60 18Q116 18 116 56V98Z" fill="${c}"/>`;return `<svg viewBox="0 0 120 100" width="${s}" height="${Math.round(s*5/6)}" aria-hidden="true">${b}<ellipse cx="55" cy="13" rx="8" ry="5.5" fill="#fffbe9"/><ellipse cx="65" cy="10" rx="6" ry="4.5" fill="#fffbe9"/><g fill="none" stroke="#3b4170" stroke-width="4.5" stroke-linecap="round"><path d="M26 33Q36 26 48 33"/><path d="M72 33Q84 26 94 33"/></g><circle cx="35" cy="60" r="23" fill="#fff"/><circle cx="85" cy="60" r="23" fill="#fff"/><circle cx="37" cy="62" r="13" fill="#3b4170"/><circle cx="83" cy="62" r="13" fill="#3b4170"/><circle cx="32" cy="56" r="4.5" fill="#fff"/><circle cx="78" cy="56" r="4.5" fill="#fff"/><circle cx="55" cy="92" r="2.2" fill="#3b4170"/><circle cx="65" cy="92" r="2.2" fill="#3b4170"/></svg>`}
@@ -762,8 +792,11 @@ const cek='<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><p
 const shd=iso=>new Date(iso).toLocaleDateString('id-ID',{day:'numeric',month:'short'});
 function prTools(r,m){if(!(me&&me.role==='pendamping'&&r.by===me.id&&m.id))return '';
  return `<div style="margin-top:8px"><button class="sm" data-act="prselesai" data-id="${m.id}">${m.selesai?'Batalkan status selesai':'Tandai selesai (sudah dikumpulkan)'}</button></div>`}
+function mapelKartu(r,m){const[bg,fg]=mc(m.mapel),cp={'Tercapai':'ok','Sebagian':'mid','Belum tercapai':'low'}[m.capaian]||'mid';
+ const cat=m.cat&&m.cat!=='-'?String(m.cat):'',long=cat.length>130,todo=m.pr&&!m.selesai;
+ return `<details class="mpd" style="--c:${bg}"${r.mapel.length===1?' open':''}><summary class="mps"><span class="mpr"><span class="mpn" style="background:${bg};color:${fg}">${esc(m.mapel)}</span><span class="mpm">${esc(m.durasi)} mnt</span><span class="cap ${cp}"><i></i>${esc(m.capaian)}</span>${m.pr?`<span class="prm${todo?' todo':''}">PR</span>`:''}</span><span class="mpt">${esc(m.topik)}</span></summary><div class="mpb">${cat?`<div class="catw"><p class="cat${long?' clip':''}">${esc(cat)}</p>${long?'<button type="button" class="lnk" data-act="more">Selengkapnya</button>':''}</div>`:''}${prBlok(r,m)}</div></details>`}
 function prBlok(r,m){if(!m.pr)return '';
- return `<div class="prb"><b>PR:</b> ${esc(m.pr)}${m.tenggat?` · dikumpulkan ${esc(sh(m.tenggat))}`:''}${m.selesai?`<div class="prok">${cek} Sudah dikumpulkan ${esc(shd(m.selesai))}</div>`:''}${prTools(r,m)}</div>`}
+ return `<div class="prb ${m.selesai?'ok':'todo'}"><div class="prh"><span class="prl">PR</span>${m.tenggat?`<span class="prd">Kumpul ${esc(sh(m.tenggat))}</span>`:''}${m.selesai?`<span class="prok">${cek} Sudah dikumpulkan ${esc(shd(m.selesai))}</span>`:''}</div><div class="prt">${esc(m.pr)}</div>${prTools(r,m)}</div>`}
 function prAktif(id){const l=[];
  kr(id).forEach(r=>r.mapel.forEach(m=>{if(!m.pr)return;
   const aktif=m.selesai?(Date.now()-new Date(m.selesai).getTime()<7*864e5):(m.tenggat?m.tenggat>=today:r.tgl>=addDay(today,-7));
@@ -1045,6 +1078,7 @@ document.addEventListener('click',async e=>{if(e.target.id==='picker'){if(!e.tar
  else if(d.act==='prselesai')prToggle(+d.id)
  else if(d.act==='rxbuka')openRx(+d.id)
  else if(d.act==='rxpilih')rxSimpan(+d.id,d.k)
+ else if(d.act==='more'){const w=b.closest('.catw'),c=w&&w.querySelector('.cat');if(c){c.classList.toggle('clip');b.textContent=c.classList.contains('clip')?'Selengkapnya':'Lebih sedikit'}}
  else if(d.act==='addmapel')openMapel()
  else if(d.act==='pilihmapel'){cards.push({mapel:d.m,topik:'',durasi:30,capaian:'Tercapai',cat:'',pr:'',tenggat:''});$('#picker').hidden=true;drawCards();saveDraft()}
  else if(d.act==='rmmapel'){cards.splice(+d.i,1);drawCards();saveDraft()}

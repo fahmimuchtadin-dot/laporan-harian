@@ -705,6 +705,7 @@ svg[data-mood="Kesal"]>*{display:none}
 <div class="toast" id="toast" role="status" hidden></div>
 <div class="toast" id="picker" hidden></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/motion@11.18.2/dist/motion.js"></script>
 <script>
 // ISI DUA BARIS INI (lihat PANDUAN.md). Kunci anon boleh publik; kunci service_role JANGAN dipakai di sini.
 const SB_URL='https://yjtzbyinyllphitymsqw.supabase.co',SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlqdHpieWlueWxscGhpdHltc3F3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMwNDA4MTIsImV4cCI6MjEwODYxNjgxMn0.LMEoIPpJHKiGj1cEGGRVJrDDnQ6IOPwPDmxGcK5NzdQ';
@@ -983,17 +984,42 @@ function salinDari(id){const r=reports.find(x=>x.id===id);if(!r)return;
  $('#picker').hidden=true;saveDraft();toast('Isi laporan '+sh(r.tgl)+' sudah disalin. Periksa dan ubah seperlunya.',false,'Tersalin!')}
 function toggleBoxes(){const r=$('#ur').value;$('#kidsBox').hidden=!(r==='pendamping'||r==='ortu');$('#clsBox').hidden=r!=='wali'}
 
+let lastAnim=null;
+function animasi(){
+ const key=me?page+(page==='kid'?selKid:''):'login';
+ if(key===lastAnim)return;lastAnim=key;
+ const M=window.Motion;
+ if(!M||!M.animate||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches))return;
+ const{animate,stagger}=M;
+ try{
+  const els=[...document.querySelectorAll('#main .card, #main .kc, #main .mpd, #main .stats>div, #main .st, #main .wkd, #main .ph, #main .hi')].slice(0,24);
+  const bersih=()=>els.forEach(e=>{e.style.opacity='';e.style.transform=''});
+  if(els.length){
+   const a=animate(els,{opacity:[0,1],transform:['translateY(14px)','translateY(0px)']},{duration:.35,delay:stagger(.04),ease:'easeOut'});
+   if(a&&a.then)a.then(bersih,bersih);
+   setTimeout(bersih,1500);
+  }
+  const h=document.querySelector('.hero h1');
+  if(h&&!h.dataset.w){h.dataset.w=1;
+   h.innerHTML=h.textContent.trim().split(/\s+/).map(w=>'<span class="kt" style="display:inline-block">'+w+'</span>').join(' ');
+   const ks=h.querySelectorAll('.kt'),fix=()=>ks.forEach(e=>{e.style.opacity='';e.style.transform=''});
+   const b=animate(ks,{opacity:[0,1],transform:['translateY(16px)','translateY(0px)']},{duration:.5,delay:stagger(.12),ease:'easeOut'});
+   if(b&&b.then)b.then(fix,fix);
+   setTimeout(fix,1500);
+  }
+ }catch(_){}
+}
 function render(){
  document.body.classList.toggle('lg',!me);
  const m=$('#main'),nav=$('#nav');
- if(!me){nav.hidden=true;m.innerHTML=loginView();$('#lf').onsubmit=login;$('#kode').oninput=fmtCode;return}
+ if(!me){nav.hidden=true;m.innerHTML=loginView();$('#lf').onsubmit=login;$('#kode').oninput=fmtCode;animasi();return}
  nav.hidden=false;
  if(page!=='kid'&&!NAV[me.role].some(n=>n[0]===page))page=NAV[me.role][0][0];
  nav.innerHTML=NAV[me.role].map(n=>`<button data-page="${n[0]}" aria-current="${n[0]===page||(page==='kid'&&n[0]==='home')?'page':'false'}"><i class="ni ni-${n[2]}" aria-hidden="true"></i><span>${n[1]}</span></button>`).join('');
  m.innerHTML=({home:homeView,kid:kidView,form:formPage,prog:progView,prof:profView,user:userPage,anak:anakPage})[page]();
  if(page==='form'&&$('#foto')){$('#foto').onchange=onFoto;$('#simpan').onclick=simpan;editLap?fillForm():restoreDraft();drawCards();drawPrev();$('#f').addEventListener('input',cardInput);$('#f').addEventListener('change',cardInput);$('#f').addEventListener('input',saveDraft);$('#f').addEventListener('change',saveDraft)}
  if(page==='user'){$('#roleChips').onchange=ev=>{$('#ur').value=ev.target.value;toggleBoxes()};toggleBoxes()}
- enhance()
+ enhance();animasi()
 }
 function enhance(){document.querySelectorAll('#main select').forEach(x=>{if(x.dataset.e)return;x.dataset.e=1;x.classList.add('hid');const b=document.createElement('button');b.type='button';b.disabled=x.disabled;b.className='sel';b.dataset.sel=x.id;b.setAttribute('aria-haspopup','dialog');b.textContent=x.options[x.selectedIndex].text;x.after(b)})}
 function openPick(id){$('#picker').removeAttribute('data-lock');const x=document.getElementById(id),l=document.querySelector(`label[for=${id}]`),t=l?l.textContent:'Pilih',p=$('#picker');

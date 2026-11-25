@@ -738,6 +738,34 @@ label{font-weight:500}
 @keyframes splashIn{from{opacity:0}to{opacity:1}}
 .primary:disabled{opacity:.85;cursor:progress}
 @media(prefers-reduced-motion:reduce){.spin{animation-duration:1.8s}}
+/* ---- Minggu > Hari (akordeon dua tingkat) ---- */
+.wkd{background:#fff;border-radius:16px;box-shadow:0 0.5px 0 rgba(60,60,67,.12);margin:0 0 12px;overflow:hidden}
+.wk{padding:14px 16px}
+.wk b{color:var(--ink);font-size:17px;font-weight:600}
+.wk small{color:var(--mute);font-weight:400;font-size:13px}
+.wk .tag{background:var(--fill);border:0;color:var(--ink)}
+.wk::after{color:var(--mute)}
+.wkc{display:block;padding:0;gap:0}
+.hari{border-top:.5px solid var(--line-2)}
+.haris{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 14px 10px 12px}
+.haris::-webkit-details-marker{display:none}
+.haris::after{content:'';flex:none;width:8px;height:8px;border-right:2.5px solid #c7c7cc;border-bottom:2.5px solid #c7c7cc;transform:rotate(-45deg);transition:transform .15s;margin-left:2px}
+.hari[open]>.haris::after{transform:rotate(45deg)}
+.haris:active{background:rgba(0,0,0,.05)}
+.hf{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:#f2f2f7;overflow:hidden}
+.hmid{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.hmid>b{font-size:15.5px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+.hch{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
+.hm{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:99px;line-height:1.35}
+.hm.hpr{background:#f2f2f7;color:#3a3a3c}
+.hm.hpr.todo{background:#ffe9a8;color:#5b4500}
+.hs{display:inline-flex}
+.hx{font-size:14px;line-height:1}
+.hfo{flex:none;font-size:12px;font-weight:600;color:var(--mute)}
+.harib{border-top:.5px solid var(--line)}
+.harib .rep-head{display:none}
+.harib .card{box-shadow:none;border-radius:0;background:transparent;padding:8px 14px 16px;margin:0}
+@media(min-width:900px){.wkc{display:block}}
 </style>
 <style id="faces">
 /* FACES:START - stiker emoticon (Naver Talk) + ikon tab bar, build 2026-10-29 */
@@ -1132,6 +1160,13 @@ function anakPage(){
 const addDay=(d,n)=>{const t=new Date(d+'T00:00:00Z');t.setUTCDate(t.getUTCDate()+n);return t.toISOString().slice(0,10)};
 const mon=d=>addDay(d,-((new Date(d+'T00:00:00Z').getUTCDay()+6)%7));
 const sh=d=>new Date(d+'T00:00').toLocaleDateString('id-ID',{day:'numeric',month:'short'});
+const KODE={'IPAS':'IPAS','Matematika':'MTK','Basa Sunda':'SUN','Bahasa Indonesia':'IND','Bahasa Inggris':'ING','PAI':'PAI','SBDP':'SBDP','Lainnya':'LAIN'};
+function hariRow(r){
+ const d=new Date(r.tgl+'T00:00').toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'short'});
+ const chips=r.mapel.map(m=>{const[bg,fg]=mc(m.mapel);return `<span class="hm" style="background:${bg};color:${fg}">${esc(KODE[m.mapel]||m.mapel)}</span>`}).join('');
+ const prAda=r.mapel.some(m=>m.pr),prTodo=r.mapel.some(m=>m.pr&&!m.selesai);
+ const rx=r.rx&&RX[r.rx.k]?`<span class="hx" aria-label="Reaksi orang tua">${RX[r.rx.k].e}</span>`:'';
+ return `<details class="hari"><summary class="haris"><span class="hf">${face(r.mood,32)}</span><span class="hmid"><b>${esc(d)}</b><span class="hch">${chips}${prAda?`<span class="hm hpr${prTodo?' todo':''}">PR</span>`:''}${r.bintang?`<span class="hs">${star(14)}</span>`:''}${rx}</span></span><span class="hfo">Fokus ${r.fokus}/5</span></summary><div class="harib">${repCard(r)}</div></details>`}
 function repList(list){
  if(!list.length)return empty('Belum ada laporan untuk anak ini.');
  const g={},cur=mon(today);list.forEach(r=>(g[mon(r.tgl)]=g[mon(r.tgl)]||[]).push(r));
@@ -1139,7 +1174,7 @@ function repList(list){
   const rs=g[w].sort((a,b)=>b.tgl.localeCompare(a.tgl)),rng=sh(w)+' – '+sh(addDay(w,6)),isNow=w===cur,isLast=w===addDay(cur,-7);
   const name=isNow?'Minggu ini':isLast?'Minggu lalu':rng,sub=isNow||isLast?`<small>${rng}</small>`:'';
   const f=(Math.round(rs.reduce((a,r)=>a+r.fokus,0)/rs.length*10)/10).toString().replace('.',',');
-  return `<details class="wkd" ${isNow||isLast?'open':''}><summary class="wk"><div><b>${name}</b>${sub}</div><span class="tag">${rs.length} laporan · fokus ${f}</span></summary><div class="wkc">${rs.map(repCard).join('')}</div></details>`}).join('')}
+  return `<details class="wkd" ${isNow?'open':''}><summary class="wk"><div><b>${name}</b>${sub}</div><span class="tag">${rs.length} laporan · fokus ${f}</span></summary><div class="wkc">${rs.map(hariRow).join('')}</div></details>`}).join('')}
 let dT;
 const draftKey=()=>'draft:'+me.id;
 const jam=t=>new Date(t).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});

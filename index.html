@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
 <style>
 /* ============================================================
    Laporan Harian — DESIGN SYSTEM v4
@@ -766,6 +766,25 @@ label{font-weight:500}
 .harib .rep-head{display:none}
 .harib .card{box-shadow:none;border-radius:0;background:transparent;padding:8px 14px 16px;margin:0}
 @media(min-width:900px){.wkc{display:block}}
+/* ---- Layar masuk: minimal, gradasi biru ke putih ---- */
+body.lg{background:linear-gradient(180deg,#3f8fc9 0%,#6fb0de 28%,#9aceeb 52%,#d4ebf8 78%,#fff 100%);background-attachment:fixed;min-height:100vh}
+.lgw2{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px 24px calc(32px + env(safe-area-inset-bottom,0px))}
+.lgi{width:100%;max-width:420px;text-align:center}
+.usr{display:block;width:64px;height:64px;margin:0 auto 6px;fill:none;stroke:#fff;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.lgw2 .hero{padding:0;color:#fff}
+.lgw2 .hero h1{font-size:clamp(28px,8vw,38px);font-weight:300;letter-spacing:.14em;color:#fff;text-shadow:0 1px 10px rgba(11,46,71,.28);margin:8px 0 6px}
+.lgs{margin:0 0 34px;color:rgba(255,255,255,.96);font-size:14px;letter-spacing:.06em;text-shadow:0 1px 8px rgba(11,46,71,.28)}
+.lgf{text-align:left}
+.fld{display:flex;align-items:center;gap:14px;border-bottom:1.5px solid #336699;padding:0 2px 6px;transition:border-color .15s}
+.fld:focus-within{border-bottom-color:#1d4a73}
+.fld svg{flex:none;width:24px;height:24px;color:#336699}
+.lgw2 .fld input.code{flex:1;min-width:0;background:transparent;border:0;border-radius:0;box-shadow:none;padding:8px 0;font-size:20px;font-weight:500;letter-spacing:.22em;text-align:left;color:#1d4a73}
+.lgw2 .fld input.code::placeholder{color:#6e88b3;letter-spacing:.1em;font-weight:400}
+.lgw2 .fld input.code:focus{box-shadow:none;background:transparent}
+.lgw2 .err{text-align:center;color:#b3261e;font-weight:500;min-height:22px;margin-top:14px;font-size:14px}
+.lgw2 .primary{display:block;width:72%;margin:18px auto 0;background:#336699;color:#fff;border-radius:2px;font-size:14px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;padding:15px 12px;box-shadow:none}
+.lgw2 .primary:active{opacity:.75}
+.lgw2 .demo{margin-top:22px;text-align:center;font-style:italic;font-size:13px;color:#3d6a97;border:0;padding:0}
 </style>
 <style id="faces">
 /* FACES:START - stiker emoticon (Naver Talk) + ikon tab bar, build 2026-10-29 */
@@ -940,11 +959,17 @@ function openMapel(){const p=$('#picker');p.removeAttribute('data-lock');const p
  p.innerHTML=`<div class="pop pk" role="dialog" aria-label="Pilih mata pelajaran"><b>Pilih mata pelajaran</b>${sisa.length?sisa.map(m=>{const[bg]=mc(m);return `<button type="button" class="opt" style="border-left:8px solid ${bg}" data-act="pilihmapel" data-m="${esc(m)}">${esc(m)}</button>`}).join(''):'<p>Semua mata pelajaran sudah ditambahkan.</p>'}<button type="button" class="sm" style="width:100%;margin-top:10px" data-act="closepick">Tutup</button></div>`;p.hidden=false}
 const empty=t=>`<div class="empty">${pet('#7fc4ee',100)}<p>${t}</p></div>`;
 
-function loginView(){return `<div class="lgw"><div class="hero">${pet('none',230)}<h1>Laporan Harian</h1></div>
- <form class="sheet" id="lf"><h2>Hai, aku Bobo!</h2><p>Masukkan kode akses dari admin sekolah.</p>
- <label for="kode">Kode akses</label><input id="kode" class="code" placeholder="XXXXX-XXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="11">
- <div class="err" id="err" role="alert"></div><button class="primary">Masuk</button>
- <div class="demo">Lupa kode? Hubungi admin sekolah.</div></form></div>`}
+function loginView(){return `<div class="lgw2"><div class="lgi">
+ <svg class="usr" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="22" r="12"/><path d="M10 56c0-12.5 9.8-20 22-20s22 7.5 22 20z"/></svg>
+ <div class="hero"><h1>Laporan Harian</h1></div>
+ <p class="lgs">Masuk dengan kode akses</p>
+ <form id="lf" class="lgf">
+  <div class="fld"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="12" r="4.6" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12.6 12H22M18.4 12v4M21.4 12v3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+  <input id="kode" class="code" placeholder="Kode akses" aria-label="Kode akses" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="11"></div>
+  <div class="err" id="err" role="alert"></div>
+  <button class="primary">Masuk</button>
+  <div class="demo">Lupa kode? Hubungi admin sekolah.</div>
+ </form></div></div>`}
 function homeView(){const ks=kids(),done=ks.filter(k=>kr(k.id).some(r=>r.tgl===today)).length,p=ks.length?Math.round(done/ks.length*100):0;
  return `<div class="hi"><div class="av">${me.nama[0]}</div><div><h2>Halo, ${esc(me.nama)}</h2><small>${SUB[me.role]}${me.role==='wali'?me.kelas:''}</small></div></div>
  <div class="card pg"><div class="ring" style="--p:${p}"><b>${p}%</b></div><div><h3>Laporan hari ini</h3><small style="color:var(--mute)">${done} dari ${ks.length} anak sudah dilaporkan</small></div></div>

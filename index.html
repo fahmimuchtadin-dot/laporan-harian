@@ -39,14 +39,14 @@
   --navy-dark:#2a6a92;
   --navy-2:#5fb0e0;
   --grn:#2a7fb0;
-  --ok:#2f9e77;
+  --ok:#336699;
   --danger:#e5484d;
   --warn-bg:#fff1c2;
   --warn-ink:#5b4500;
   --hilite:#bfe6fa;
   --hilite-deep:#7fbfe6;
   --hilite-ink:#0e3550;
-  --mint:#7fe3c4;
+  --mint:#b9dcf3;
   --lime:#8fd4f5;
   --snip:#cfe8f6;
   --on-bg:#0e3550;
@@ -429,7 +429,7 @@ select.hid{display:none}
   border-radius:12px;padding:9px 12px;margin:8px 0 0;font-size:13.5px;line-height:1.5;font-weight:700;
 }
 .prok{
-  display:inline-flex;align-items:center;gap:6px;background:#d8f7e6;color:#146c4c;
+  display:inline-flex;align-items:center;gap:6px;background:#dcecf9;color:#1d4a73;
   border-radius:99px;padding:3px 11px;font-weight:800;font-size:12px;margin-top:6px;
 }
 .prc{margin-top:6px;padding:8px 12px;border-left:4px solid var(--navy-2);background:var(--card);color:var(--ink);border-radius:8px}
@@ -526,7 +526,7 @@ html{scroll-behavior:smooth}
   body::after{
     content:'';position:fixed;top:0;left:0;right:0;height:4px;z-index:60;pointer-events:none;
     transform:scaleX(0);transform-origin:0 50%;
-    background:linear-gradient(90deg,#4cacdf,#7fe3c4 55%,#fffdf0);
+    background:linear-gradient(90deg,#4cacdf,#b9dcf3 55%,#fffdf0);
     animation:scrollbarGrow linear both;
     animation-timeline:scroll(root block);
   }
@@ -626,7 +626,7 @@ html{scroll-behavior:smooth}
 .mpn{padding:3px 10px;border-radius:99px;font-weight:800;font-size:12px;line-height:1.3}
 .mpm{font-size:12px;font-weight:800;color:var(--mute)}
 .cap{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:800;color:var(--ink-2)}
-.cap i{width:9px;height:9px;border-radius:50%;background:#2fb344;display:inline-block}
+.cap i{width:9px;height:9px;border-radius:50%;background:#336699;display:inline-block}
 .cap.mid i{background:#f0a500}.cap.low i{background:#e5484d}
 .prm{font-size:11px;font-weight:800;padding:2px 8px;border-radius:99px;background:var(--card);border:2px solid var(--line);color:var(--ink-2)}
 .prm.todo{background:#ffe9a8;border-color:#f0c24b;color:#5b4500}
@@ -865,7 +865,7 @@ const SB_URL='https://yjtzbyinyllphitymsqw.supabase.co',SB_KEY='eyJhbGciOiJIUzI1
 const FN_LOGIN='clever-task',FN_AKUN='kelola-akun';
 const sb=window.supabase.createClient(SB_URL,SB_KEY);
 const KIDS=[];
-const COL=[{bg:'#7fc4ee',fg:'#0b2e47'},{bg:'#8b9bff',fg:'#3b4170'},{bg:'#8ce8c8',fg:'#0d4a3c'},{bg:'#4fd8b4',fg:'#3b4170'},{bg:'#ff9db0',fg:'#3b4170'}];
+const COL=[{bg:'#7fc4ee',fg:'#0b2e47'},{bg:'#8b9bff',fg:'#3b4170'},{bg:'#c3a6ff',fg:'#2e1a5c'},{bg:'#ffb25b',fg:'#4a2a00'},{bg:'#ff9db0',fg:'#3b4170'}];
 const kc=id=>COL[(id-1)%COL.length];
 let USERS=[],LINK_P=[],LINK_O=[];
 const ROLE={admin:'Admin',pendamping:'Pendamping',ortu:'Orang tua',wali:'Wali kelas'};
@@ -922,7 +922,7 @@ const star=(z=18)=>`<svg viewBox="0 0 24 24" width="${z}" height="${z}" aria-hid
 const BINTANG=['Rajin bertanya','Hebat hari ini','Makin lancar','Teman yang baik','Mandiri','Pantang menyerah'];
 const bintangPick=()=>`<div class="chips"><label><input type="radio" name="bintang" value="" checked><span>Tanpa bintang</span></label>${BINTANG.map(b=>`<label><input type="radio" name="bintang" value="${b}"><span>${b}</span></label>`).join('')}</div>`;
 const MAPEL=['IPAS','Matematika','Basa Sunda','Bahasa Indonesia','Bahasa Inggris','PAI','SBDP'];
-const MC={'IPAS':['#58c7a0','#14301f'],'Matematika':['#8b9bff','#1c2260'],'Basa Sunda':['#ffb25b','#4a2a00'],'Bahasa Indonesia':['#ff9db0','#4a1020'],'Bahasa Inggris':['#c3a6ff','#2e1a5c'],'PAI':['#7fd8e0','#0d3b40'],'SBDP':['#8ce8c8','#0d4a3c'],'Lainnya':['#d8dce8','#2b2f45']};
+const MC={'IPAS':['#ff8a80','#4a1010'],'Matematika':['#8b9bff','#1c2260'],'Basa Sunda':['#ffb25b','#4a2a00'],'Bahasa Indonesia':['#ff9db0','#4a1020'],'Bahasa Inggris':['#c3a6ff','#2e1a5c'],'PAI':['#7fd8e0','#0d3b40'],'SBDP':['#ffd23f','#4a3a00'],'Lainnya':['#d8dce8','#2b2f45']};
 const mc=m=>MC[m]||MC.Lainnya;
 let cards=[];
 function drawCards(){const e=$('#cards');if(!e)return;
@@ -941,7 +941,7 @@ function rxBlok(r){const k=r.rx&&RX[r.rx.k];let h='';
  else if(me&&me.role!=='ortu')h+='<div class="gn" style="margin-top:8px">Belum dicek orang tua</div>';
  if(me&&me.role==='ortu')h+=`<div style="margin-top:8px"><button class="sm" data-act="rxbuka" data-id="${r.id}">${k?'Ubah reaksi':'Sudah saya cek'}</button></div>`;
  return h?`<div class="sec">${h}</div>`:''}
-const cek='<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#0f4d1c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const cek='<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#1d4a73" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const shd=iso=>new Date(iso).toLocaleDateString('id-ID',{day:'numeric',month:'short'});
 function prTools(r,m){if(!(me&&me.role==='pendamping'&&r.by===me.id&&m.id))return '';
  return `<div style="margin-top:8px"><button class="sm" data-act="prselesai" data-id="${m.id}">${m.selesai?'Batalkan status selesai':'Tandai selesai (sudah dikumpulkan)'}</button></div>`}
@@ -1018,7 +1018,7 @@ function progView(){const ks=kids();if(!ks.length)return empty('Belum ada anak t
  <div class="card"><h3>${nm(selMon)}</h3><small style="color:var(--mute)">${filled} hari ada laporan · ${n} laporan</small><div class="wstrip">${cal}</div></div>
  ${(()=>{const g={};rs.forEach(r=>r.mapel.forEach(m=>{const o=g[m.mapel]=g[m.mapel]||{n:0,t:0,mnt:0};o.n++;o.mnt+=(+m.durasi||0);if(m.capaian==='Tercapai')o.t++}));const k=MAPEL.concat('Lainnya').filter(x=>g[x]);return k.length?`<div class="card"><h3>Per mata pelajaran</h3>${k.map(x=>{const o=g[x],pc=Math.round(o.t/o.n*100),[bg]=mc(x);return `<div class="pb" style="grid-template-columns:130px 1fr 42px"><span>${x}</span><div><i style="width:${pc}%;background:${bg}"></i></div><span>${pc}%</span></div><small style="color:var(--mute);display:block;margin:-6px 0 6px">${o.n} kali · ${o.mnt} menit · capaian tercapai</small>`}).join('')}</div>`:''})()}
  <div class="card"><h3>Bintang</h3>${(()=>{const c={};rs.forEach(r=>{if(r.bintang)c[r.bintang]=(c[r.bintang]||0)+1});const k=Object.keys(c);return k.length?`<div class="tags" style="margin-top:8px">${k.map(b=>`<span class="bt">${star(16)}${esc(b)} ×${c[b]}</span>`).join('')}</div>`:'<p style="color:var(--mute);margin:6px 0 0">Belum ada bintang di bulan ini.</p>'})()}</div>
- <div class="card"><h3>Per aspek</h3>${n?B('Fokus',fokus,'#8b9bff')+B('Capaian',cap,'#3f9bd0')+B('Suasana hati',mood,'#5ed3b0'):'<p style="color:var(--mute)">Belum ada laporan di bulan ini.</p>'}<small style="color:var(--mute)">Capaian: persentase laporan berstatus tercapai. Suasana hati: persentase hari senang, ceria, atau tenang.</small></div>`}
+ <div class="card"><h3>Per aspek</h3>${n?B('Fokus',fokus,'#8b9bff')+B('Capaian',cap,'#3f9bd0')+B('Suasana hati',mood,'#ffb800'):'<p style="color:var(--mute)">Belum ada laporan di bulan ini.</p>'}<small style="color:var(--mute)">Capaian: persentase laporan berstatus tercapai. Suasana hati: persentase hari senang, ceria, atau tenang.</small></div>`}
 function profView(){const ks=kids(),n=me.role==='admin'?USERS.length:ks.reduce((a,k)=>a+kr(k.id).length,0);
  return `<div style="text-align:center;margin:10px 0 16px"><div class="av big">${me.nama[0]}</div><h2>${esc(me.nama)}</h2><small style="color:var(--mute)">${ROLE[me.role]}${me.role==='wali'?' · kelas '+me.kelas:''}</small></div>
  <div class="stats" style="grid-template-columns:1fr 1fr"><div><b>${me.role==='admin'?USERS.length:ks.length}</b><small>${me.role==='admin'?'Pengguna':'Anak'}</small></div><div><b>${me.role==='admin'?KIDS.length:n}</b><small>${me.role==='admin'?'Anak terdaftar':'Laporan'}</small></div></div>

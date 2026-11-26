@@ -678,17 +678,17 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.02em}
 .tag{border:0;background:var(--fill);font-weight:500;color:#1c1c1e}
 .rep-head h3{font-weight:600}.rep-head time{font-weight:400}
 input:not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea{background:#f2f2f7;border:0;border-radius:12px;padding:13px 14px;font-size:17px;font-weight:400}
-input:not([type=checkbox]):not([type=radio]):focus,select:focus,textarea:focus{outline:none;border:0;background:#f2f2f7;box-shadow:0 0 0 3px rgba(27,127,197,.28)}
+input:not([type=checkbox]):not([type=radio]):focus,select:focus,textarea:focus{outline:none;border:0;background:#f2f2f7;box-shadow:0 0 0 3px rgba(51,102,153,.28)}
 label{font-weight:500}
 #prev input{font-size:16px!important}
 .primary{background:var(--tint);color:#fff;font-weight:600;font-size:17px;letter-spacing:0;text-transform:none;padding:15px 14px;border-radius:14px;box-shadow:none}
 .primary:active{transform:none;box-shadow:none;opacity:.7}
 .primary:hover{filter:none}
 .sm,.lnk{font-weight:600}
-.sm{background:rgba(27,127,197,.12);color:var(--tint);border:0;border-radius:99px;padding:7px 14px;box-shadow:none}
+.sm{background:rgba(51,102,153,.12);color:var(--tint);border:0;border-radius:99px;padding:7px 14px;box-shadow:none}
 .sm.d{background:rgba(255,59,48,.12);color:#d70015}
 .sm:active{opacity:.6;transform:none}
-.sm:hover{background:rgba(27,127,197,.18);border-color:transparent}
+.sm:hover{background:rgba(51,102,153,.18);border-color:transparent}
 .sm.d:hover{background:rgba(255,59,48,.18)}
 .chips span{border:0;background:var(--fill);border-radius:99px;font-weight:500;color:#1c1c1e;padding:8px 15px}
 .chips input:checked+span{background:var(--tint);color:#fff}
@@ -726,7 +726,7 @@ label{font-weight:500}
  .nav{background:rgba(249,249,249,.9);border:0;border-right:.5px solid var(--line-2)}
  .nav::before{color:#000;font-weight:700}
  .nav button{font-weight:500;color:#3a3a3c}
- .nav [aria-current=page]{background:rgba(27,127,197,.12);color:var(--tint)}
+ .nav [aria-current=page]{background:rgba(51,102,153,.12);color:var(--tint)}
  .ph{font-size:36px}
 }
 /* ---- Animasi pemuatan ---- */
@@ -785,6 +785,17 @@ body.lg{background:linear-gradient(180deg,#3f8fc9 0%,#6fb0de 28%,#9aceeb 52%,#d4
 .lgw2 .primary{display:block;width:72%;margin:18px auto 0;background:#336699;color:#fff;border-radius:2px;font-size:14px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;padding:15px 12px;box-shadow:none}
 .lgw2 .primary:active{opacity:.75}
 .lgw2 .demo{margin-top:22px;text-align:center;font-style:italic;font-size:13px;color:#3d6a97;border:0;padding:0}
+/* ---- Warna isi aplikasi disamakan dengan layar masuk (biru ke putih, aksen #336699) ---- */
+:root{--tint:#336699;--navy:#336699;--on-bg:#12324f;--on-bg-mute:#1d4a73}
+body:not(.lg){background:#e6f2fb}
+body:not(.lg)::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,#8cc4ea 0%,#b3d9f2 30%,#dcedf8 62%,#ffffff 100%)}
+.ph{color:#12324f}
+.ph small{color:#1d4a73}
+.hi h2{color:#12324f}
+.hi small{color:#1d4a73}
+.st{color:#1d4a73}
+.empty{color:#1d4a73}
+#splash{background:linear-gradient(180deg,#8cc4ea 0%,#dcedf8 70%,#fff 100%);color:#12324f}
 </style>
 <style id="faces">
 /* FACES:START - stiker emoticon (Naver Talk) + ikon tab bar, build 2026-10-29 */

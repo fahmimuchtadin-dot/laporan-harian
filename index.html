@@ -116,7 +116,7 @@ input,select,textarea{
   transition:border-color .15s,background .15s,box-shadow .15s;
 }
 input::placeholder,textarea::placeholder{color:#b3a888;font-weight:600}
-input:hover,select:hover,textarea:hover{background:#f8ecca}
+input:hover,select:hover,textarea:hover{background:#eaf3fb}
 input:focus,select:focus,textarea:focus{
   border-color:var(--navy-2);background:var(--card);outline:none;
   box-shadow:0 0 0 3px rgba(95,176,224,.28);
@@ -796,6 +796,14 @@ body:not(.lg)::before{content:'';position:fixed;inset:0;z-index:-1;pointer-event
 .st{color:#1d4a73}
 .empty{color:#1d4a73}
 #splash{background:linear-gradient(180deg,#8cc4ea 0%,#dcedf8 70%,#fff 100%);color:#12324f}
+/* ---- Palet satu keluarga biru ---- */
+:root{--warn-bg:#e1effa;--warn-ink:#1d4a73}
+.cap i{background:#336699}
+.cap.mid i{background:linear-gradient(90deg,#336699 50%,#bcd7ee 50%)}
+.cap.low i{background:transparent;box-shadow:inset 0 0 0 2px #336699}
+.prm.todo,.hm.hpr.todo{background:#336699;border-color:#336699;color:#fff}
+.prb.todo{background:#e1effa;border-left:4px solid #336699}
+.bt,.prx{background:#dcecf9;color:#1d4a73}
 </style>
 <style id="faces">
 /* FACES:START - stiker emoticon (Naver Talk) + ikon tab bar, build 2026-10-29 */
@@ -865,7 +873,7 @@ const SB_URL='https://yjtzbyinyllphitymsqw.supabase.co',SB_KEY='eyJhbGciOiJIUzI1
 const FN_LOGIN='clever-task',FN_AKUN='kelola-akun';
 const sb=window.supabase.createClient(SB_URL,SB_KEY);
 const KIDS=[];
-const COL=[{bg:'#7fc4ee',fg:'#0b2e47'},{bg:'#8b9bff',fg:'#3b4170'},{bg:'#c3a6ff',fg:'#2e1a5c'},{bg:'#ffb25b',fg:'#4a2a00'},{bg:'#ff9db0',fg:'#3b4170'}];
+const COL=[{bg:'#7bb6e8',fg:'#0b2e47'},{bg:'#5a9fdf',fg:'#0b2e47'},{bg:'#3f7fc4',fg:'#ffffff'},{bg:'#336699',fg:'#ffffff'},{bg:'#9ccdf0',fg:'#12324f'}];
 const kc=id=>COL[(id-1)%COL.length];
 let USERS=[],LINK_P=[],LINK_O=[];
 const ROLE={admin:'Admin',pendamping:'Pendamping',ortu:'Orang tua',wali:'Wali kelas'};
@@ -922,7 +930,7 @@ const star=(z=18)=>`<svg viewBox="0 0 24 24" width="${z}" height="${z}" aria-hid
 const BINTANG=['Rajin bertanya','Hebat hari ini','Makin lancar','Teman yang baik','Mandiri','Pantang menyerah'];
 const bintangPick=()=>`<div class="chips"><label><input type="radio" name="bintang" value="" checked><span>Tanpa bintang</span></label>${BINTANG.map(b=>`<label><input type="radio" name="bintang" value="${b}"><span>${b}</span></label>`).join('')}</div>`;
 const MAPEL=['IPAS','Matematika','Basa Sunda','Bahasa Indonesia','Bahasa Inggris','PAI','SBDP'];
-const MC={'IPAS':['#ff8a80','#4a1010'],'Matematika':['#8b9bff','#1c2260'],'Basa Sunda':['#ffb25b','#4a2a00'],'Bahasa Indonesia':['#ff9db0','#4a1020'],'Bahasa Inggris':['#c3a6ff','#2e1a5c'],'PAI':['#7fd8e0','#0d3b40'],'SBDP':['#ffd23f','#4a3a00'],'Lainnya':['#d8dce8','#2b2f45']};
+const MC={'IPAS':['#9ccdf0','#12324f'],'Matematika':['#5a9fdf','#0b2e47'],'Basa Sunda':['#bfe3f7','#12324f'],'Bahasa Indonesia':['#3f7fc4','#ffffff'],'Bahasa Inggris':['#2a5683','#ffffff'],'PAI':['#7bb6e8','#0b2e47'],'SBDP':['#336699','#ffffff'],'Lainnya':['#c9d6e3','#2b3f55']};
 const mc=m=>MC[m]||MC.Lainnya;
 let cards=[];
 function drawCards(){const e=$('#cards');if(!e)return;
@@ -1018,7 +1026,7 @@ function progView(){const ks=kids();if(!ks.length)return empty('Belum ada anak t
  <div class="card"><h3>${nm(selMon)}</h3><small style="color:var(--mute)">${filled} hari ada laporan · ${n} laporan</small><div class="wstrip">${cal}</div></div>
  ${(()=>{const g={};rs.forEach(r=>r.mapel.forEach(m=>{const o=g[m.mapel]=g[m.mapel]||{n:0,t:0,mnt:0};o.n++;o.mnt+=(+m.durasi||0);if(m.capaian==='Tercapai')o.t++}));const k=MAPEL.concat('Lainnya').filter(x=>g[x]);return k.length?`<div class="card"><h3>Per mata pelajaran</h3>${k.map(x=>{const o=g[x],pc=Math.round(o.t/o.n*100),[bg]=mc(x);return `<div class="pb" style="grid-template-columns:130px 1fr 42px"><span>${x}</span><div><i style="width:${pc}%;background:${bg}"></i></div><span>${pc}%</span></div><small style="color:var(--mute);display:block;margin:-6px 0 6px">${o.n} kali · ${o.mnt} menit · capaian tercapai</small>`}).join('')}</div>`:''})()}
  <div class="card"><h3>Bintang</h3>${(()=>{const c={};rs.forEach(r=>{if(r.bintang)c[r.bintang]=(c[r.bintang]||0)+1});const k=Object.keys(c);return k.length?`<div class="tags" style="margin-top:8px">${k.map(b=>`<span class="bt">${star(16)}${esc(b)} ×${c[b]}</span>`).join('')}</div>`:'<p style="color:var(--mute);margin:6px 0 0">Belum ada bintang di bulan ini.</p>'})()}</div>
- <div class="card"><h3>Per aspek</h3>${n?B('Fokus',fokus,'#8b9bff')+B('Capaian',cap,'#3f9bd0')+B('Suasana hati',mood,'#ffb800'):'<p style="color:var(--mute)">Belum ada laporan di bulan ini.</p>'}<small style="color:var(--mute)">Capaian: persentase laporan berstatus tercapai. Suasana hati: persentase hari senang, ceria, atau tenang.</small></div>`}
+ <div class="card"><h3>Per aspek</h3>${n?B('Fokus',fokus,'#9ccdf0')+B('Capaian',cap,'#5a9fdf')+B('Suasana hati',mood,'#336699'):'<p style="color:var(--mute)">Belum ada laporan di bulan ini.</p>'}<small style="color:var(--mute)">Capaian: persentase laporan berstatus tercapai. Suasana hati: persentase hari senang, ceria, atau tenang.</small></div>`}
 function profView(){const ks=kids(),n=me.role==='admin'?USERS.length:ks.reduce((a,k)=>a+kr(k.id).length,0);
  return `<div style="text-align:center;margin:10px 0 16px"><div class="av big">${me.nama[0]}</div><h2>${esc(me.nama)}</h2><small style="color:var(--mute)">${ROLE[me.role]}${me.role==='wali'?' · kelas '+me.kelas:''}</small></div>
  <div class="stats" style="grid-template-columns:1fr 1fr"><div><b>${me.role==='admin'?USERS.length:ks.length}</b><small>${me.role==='admin'?'Pengguna':'Anak'}</small></div><div><b>${me.role==='admin'?KIDS.length:n}</b><small>${me.role==='admin'?'Anak terdaftar':'Laporan'}</small></div></div>
